@@ -4,29 +4,31 @@ import { BASIC_AUTH_USERNAME, BASIC_AUTH_PASSWORD } from '$env/static/private';
 
 async function authenticate(request) {
 
-const authHeader = request.headers.get('authorization');
-
-if (!authHeader){
-	return new Response('Authentication required',{
-		status: 401,
-		headers: { 'WWW-Authenticate': 'Basic realm="Secure Area"'}
-	});
-
-}
-
-const base64Credentials = authHeader.split(' ')[1];
-const credentials = atob(base64Credentials);
-const [username, password] = credentials.split(':');
-
-if (username!== BASIC_AUTH_USERNAME && password!== BASIC_AUTH_PASSWORD){
-	return new Response (JSON.stringify({message:'Access denied'}), {
-		status: 401,
-		headers: {'Content-Type': 'application/json'},
-	}); 
-}
-return null;
-
-}
+	const authHeader = request.headers.get('authorization');
+	
+	if (!authHeader){
+		return new Response(null,{
+			status: 401,
+			headers: { 'WWW-Authenticate': 'Basic realm="Secure Area"'}
+		});
+	
+	}
+	
+	
+	const base64Credentials = authHeader.split(' ')[1];
+	const credentials = atob(base64Credentials);
+	const [username, password] = credentials.split(':');
+	
+	
+	if (username !== BASIC_AUTH_USERNAME || password !== BASIC_AUTH_PASSWORD){
+		return new Response (JSON.stringify({message:'Access denied'}), {
+			status: 401,
+			headers: {'Content-Type': 'application/json'},
+		}); 
+	}
+	return null;
+	
+	}
 
 // The GET function is called when a GET request is made to the endpoint
 export async function GET({ params }) {
